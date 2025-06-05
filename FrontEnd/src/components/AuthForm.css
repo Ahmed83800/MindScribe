@@ -1,0 +1,75 @@
+/* Center the entire container on screen */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Full viewport height */
+  background-color: #f3f4f6; /* Light gray background */
+}
+
+/* Style the button group (menu buttons) */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.button-group button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #4f46e5;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.button-group button:hover {
+  background-color: #3730a3;
+}
+
+/* Style the form container */
+.auth-form {
+  width: 300px;
+  padding: 20px;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  background-color: #fdfdfd;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Form heading */
+.auth-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Form inputs */
+.auth-form input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+/* Submit button in form */
+.auth-form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.auth-form button:hover {
+  background-color: #1d4ed8;
+}

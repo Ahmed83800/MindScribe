@@ -1,0 +1,265 @@
+/* Header */
+.main-header {
+  background-color: #5b7cfa;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Sidebar Navigation */
+.user-navbar-container {
+  position: fixed;
+  top: 50px; /* same as header height */
+  left: 0;
+  height: calc(100% - 50px);
+  width: 200px;
+  background-color: #eef1fd;
+  transition: transform 0.3s ease-in-out;
+  z-index: 999;
+  padding: 1rem 0.5rem;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.user-navbar-container.closed {
+  transform: translateX(-100%);
+}
+
+.user-navbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 0.5rem;
+}
+
+.user-navbar button {
+  padding: 0.6rem 1rem;
+  border: none;
+  background-color: #5b7cfa;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.user-navbar button:hover {
+  background-color: #4865c8;
+}
+
+/* Toggle Button */
+.toggle-sidebar {
+  position: fixed;
+  top: 60px;
+  left: 200px;
+  background-color: #5b7cfa;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.7rem;
+  cursor: pointer;
+  border-radius: 0 6px 6px 0;
+  z-index: 1001;
+}
+
+.user-navbar-container.closed + .toggle-sidebar {
+  left: 0;
+}
+
+/* Page Content */
+.user-page-content {
+  padding: 1rem;
+  margin-top: 60px; /* space for fixed header */
+  margin-left: 210px; /* space for sidebar */
+  max-width: 700px;
+  transition: margin-left 0.3s ease;
+}
+
+.user-navbar-container.closed ~ .user-page-content {
+  margin-left: 20px;
+}
+
+/* Shared Forms */
+.thought-form,
+.sentiment-form,
+.complaint-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+textarea {
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.mood-selector {
+  display: flex;
+  gap: 1rem;
+}
+/* src/UserPages.css */
+
+/* ========================================================================
+   Container for the "All Thoughts" page
+   - Uses up to 90% of the viewport width
+   - Centers itself horizontally
+   - Less top padding so content moves up
+   ======================================================================== */
+.all-thoughts {
+  width: 90%;
+  max-width: 1200px;
+  margin: 16px auto 0; /* 16px top margin instead of large padding */
+  padding-bottom: 16px;
+}
+
+/* ========================================================================
+   Grid: auto-fit columns at minimum 320px each, with 24px gaps
+   - Allows cards to fill more horizontal space
+   - Automatically rearranges to 2-per-row or 3-per-row if the viewport is very wide
+   ======================================================================== */
+.all-thoughts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 12px; /* slight space below the header */
+}
+
+/* ========================================================================
+   Each card (fieldset) styling:
+   - Full width of its grid cell
+   - More generous padding
+   - Deeper box-shadow and a subtle border accent
+   - Rounded corners
+   - Slight hover lift for interactivity
+   ======================================================================== */
+.thought-card {
+  border: 1px solid #e0e0e0;
+  border-left: 4px solid #3498db;       /* accent color on left edge */
+  border-radius: 12px;
+  padding: 20px 24px 56px;               /* space for content + buttons */
+  position: relative;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.thought-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+/* ========================================================================
+   Legend (card header) styling:
+   - Slight background highlight
+   - Larger font
+   - Padding and rounded corners to stand out
+   ======================================================================== */
+.thought-legend {
+  font-weight: 600;
+  font-size: 1.15rem;
+  padding: 0 10px;
+  background-color: #f1faff;
+  border: 1px solid #d0eaff;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  color: #2c3e50;
+}
+
+/* ========================================================================
+   Date/time in smaller, italicized gray text
+   ======================================================================== */
+.thought-date {
+  font-size: 0.85rem;
+  color: #777777;
+  font-style: italic;
+  margin-bottom: 14px;
+}
+
+/* ========================================================================
+   Thought text:
+   - Comfortable line-height
+   - Slightly larger font for readability
+   ======================================================================== */
+.thought-text {
+  margin-bottom: 28px;
+  line-height: 1.5;
+  font-size: 1rem;
+  color: #333333;
+}
+
+/* ========================================================================
+   Container for the Delete/Update buttons at bottom-left
+   ======================================================================== */
+.thought-actions {
+  position: absolute;
+  bottom: 16px;
+  left: 24px;
+  display: flex;
+  gap: 12px;
+}
+
+/* ========================================================================
+   Common button styling:
+   - More padding
+   - Rounded corners
+   - Subtle hover effect
+   ======================================================================== */
+.thought-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: opacity 0.12s ease-in-out;
+}
+
+/* Delete button: red gradient background */
+.delete-btn {
+  background: linear-gradient(120deg, #e74c3c, #c0392b);
+  color: #fff;
+}
+
+/* Update button: blue gradient background */
+.update-btn {
+  background: linear-gradient(120deg, #3498db, #2980b9);
+  color: #fff;
+}
+
+/* Slight hover dimming */
+.thought-btn:hover {
+  opacity: 0.92;
+}
+
+/* ========================================================================
+   Responsive adjustments for narrow screens
+   - Stack cards one per row if viewport < 640px
+   ======================================================================== */
+@media (max-width: 640px) {
+  .all-thoughts {
+    width: 96%;
+    margin: 12px auto 0;
+  }
+
+  .all-thoughts-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .thought-actions {
+    gap: 8px;
+  }
+}
