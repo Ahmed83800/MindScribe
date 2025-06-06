@@ -242,6 +242,81 @@ textarea {
 .thought-btn:hover {
   opacity: 0.92;
 }
+/* status text for loading / empty */
+.status-text {
+  padding: 24px;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #555;
+}
+
+/* wrapper around inline edit form */
+.edit-thought-wrapper {
+  border: 2px dashed #3498db;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 32px;
+  background: #f8fcff;
+  position: relative;
+}
+
+/* cancel button for inline edit form */
+.cancel-edit {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  background: transparent;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.cancel-edit:hover { color: #000; }
+.sentiment-container {
+  max-width: 700px;
+  margin: auto;
+  padding: 1rem;
+}
+
+.analyze-btn {
+  background-color: #2196f3;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.emoji-summary {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+.breakdown-list {
+  margin-top: 1rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.breakdown-list li {
+  margin-bottom: 0.5rem;
+  padding: 0.4rem;
+  border-bottom: 1px solid #ccc;
+}
+.insight-box {
+  background-color: #f0f8ff;
+  border-left: 5px solid #4CAF50;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 8px;
+  font-style: italic;
+}
+
 
 /* ========================================================================
    Responsive adjustments for narrow screens

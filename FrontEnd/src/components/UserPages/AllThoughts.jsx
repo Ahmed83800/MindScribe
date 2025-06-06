@@ -1,18 +1,21 @@
 // src/UserPages/AllThoughts.jsx
 import React, { useEffect, useState } from 'react';
+import AddThought from './AddThought';           // ← import the form you already have
 import './UserPages.css';
 
 const AllThoughts = ({ userId }) => {
-  const [thoughts, setThoughts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [thoughts, setThoughts]   = useState([]);
+  const [loading, setLoading]     = useState(true);
+  const [editing, setEditing]     = useState(null); // { _id, text, mood } or null
 
-  // Fetch all thoughts for this user
+  /* ------------------------------------------------------------------ */
+  /* Fetch thoughts                                                     */
+  /* ------------------------------------------------------------------ */
   const fetchThoughts = async () => {
     try {
       const res = await fetch(`http://localhost:5000/api/thoughts/${userId}`);
-      if (!res.ok) throw new Error('Failed to fetch');
-      const data = await res.json();
-      setThoughts(data);
+      if (!res.ok) throw new Error('Fetch failed');
+      setThoughts(await res.json());
     } catch (err) {
       console.error(err);
       setThoughts([]);
@@ -21,101 +24,89 @@ const AllThoughts = ({ userId }) => {
     }
   };
 
-  useEffect(() => {
-    fetchThoughts();
-  }, [userId]);
+  useEffect(() => { fetchThoughts(); }, [userId]);
 
-  // Delete a thought by its ID
+  /* ------------------------------------------------------------------ */
+  /* Delete                                                             */
+  /* ------------------------------------------------------------------ */
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this thought?')) return;
-
+    if (!window.confirm('Delete this thought?')) return;
     try {
       const res = await fetch(`http://localhost:5000/api/thoughts/${id}`, {
         method: 'DELETE'
       });
-      if (!res.ok) throw new Error('Delete failed');
-      // Remove from state without re‐fetching everything
-      setThoughts((prev) => prev.filter((t) => t._id !== id));
-    } catch (err) {
-      console.error(err);
+      if (!res.ok) throw new Error();
+      setThoughts(prev => prev.filter(t => t._id !== id));
+    } catch {
       alert('Failed to delete');
     }
   };
 
-  // Update a thought: prompt for new text & mood, then PUT
-  const handleUpdate = async (id, currentText, currentMood) => {
-    const newText = window.prompt('Enter new thought text:', currentText);
-    if (newText === null) return; // user cancelled
+  /* ------------------------------------------------------------------ */
+  /* Start editing                                                      */
+  /* ------------------------------------------------------------------ */
+  const startEdit = (thought) => setEditing(thought);
 
-    const newMood = window.prompt(
-      'Enter new mood (Happy / Sad / Neutral):',
-      currentMood
-    );
-    if (newMood === null) return; // user cancelled
-
-    // Validate mood exactly matches one of the enum values
-    const validMoods = ['Happy', 'Sad', 'Neutral'];
-    if (!validMoods.includes(newMood)) {
-      alert(`Mood must be one of: ${validMoods.join(', ')}`);
-      return;
-    }
-
-    try {
-      const res = await fetch(`http://localhost:5000/api/thoughts/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: newText, mood: newMood })
-      });
-      if (!res.ok) throw new Error('Update failed');
-      // After a successful update, refresh the list
-      fetchThoughts();
-    } catch (err) {
-      console.error(err);
-      alert('Failed to update');
-    }
+  /* ------------------------------------------------------------------ */
+  /* After edit succeeds                                                */
+  /* ------------------------------------------------------------------ */
+  const handleEditSuccess = () => {
+    setEditing(null);   // hide form
+    fetchThoughts();    // refresh list
   };
 
-  if (loading) {
-    return (
-      <div className="all-thoughts">
-        <h2>Your Thoughts</h2>
-        <p>Loading...</p>
-      </div>
-    );
-  }
+  /* ------------------------------------------------------------------ */
+  /* Loading / empty states                                             */
+  /* ------------------------------------------------------------------ */
+  if (loading) return <p className="status-text">Loading…</p>;
+  if (!thoughts.length) return <p className="status-text">No thoughts yet.</p>;
 
-  if (thoughts.length === 0) {
-    return (
-      <div className="all-thoughts">
-        <h2>Your Thoughts</h2>
-        <p>You have no thoughts yet.</p>
-      </div>
-    );
-  }
-
+  /* ------------------------------------------------------------------ */
+  /* Render                                                             */
+  /* ------------------------------------------------------------------ */
   return (
     <div className="all-thoughts">
       <h2>Your Thoughts</h2>
+
+      {/* Inline edit form (appears only when editing !== null) */}
+      {editing && (
+        <div className="edit-thought-wrapper">
+          <AddThought
+            userId={userId}
+            editingThoughtId={editing._id}
+            existingThought={editing}
+            onSuccess={handleEditSuccess}
+          />
+          <button className="cancel-edit" onClick={() => setEditing(null)}>
+            ✖ Cancel
+          </button>
+        </div>
+      )}
+
+      {/* Grid of cards */}
       <div className="all-thoughts-grid">
         {thoughts.map((t) => (
           <fieldset key={t._id} className="thought-card">
             <legend className="thought-legend">{t.mood}</legend>
+
             <div className="thought-date">
               {new Date(t.date).toLocaleString()}
             </div>
+
             <p className="thought-text">{t.text}</p>
+
             <div className="thought-actions">
+              <button
+                className="thought-btn update-btn"
+                onClick={() => startEdit(t)}
+              >
+                Update
+              </button>
               <button
                 className="thought-btn delete-btn"
                 onClick={() => handleDelete(t._id)}
               >
                 Delete
-              </button>
-              <button
-                className="thought-btn update-btn"
-                onClick={() => handleUpdate(t._id, t.text, t.mood)}
-              >
-                Update
               </button>
             </div>
           </fieldset>

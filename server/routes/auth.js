@@ -24,7 +24,11 @@ router.post('/signup', async (req, res) => {
     });
     await newUser.save();
 
-    res.status(201).json({ message: 'Signup successful' });
+    res.status(201).json({ 
+      message: 'Signup successful',
+      userId: newUser._id.toString(),
+      username: newUser.username
+    });
   } catch {
     res.status(500).json({ message: 'Server error' });
   }

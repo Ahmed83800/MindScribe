@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import './AuthForm.css';
+import UserDashboard from './UserPages/UserDashboard';
+
 const SignupForm = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
     username: '',
+    fullName: '',
     email: '',
-    password: ''
+    password: '',
+    isAdmin: false 
   });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    console.log('Signup Data:', formData);
-
     try {
       const response = await fetch('http://localhost:5000/api/auth/signup', {
         method: 'POST',
@@ -26,11 +29,9 @@ const SignupForm = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert('Signup successful');
-        console.log(data);
-        
-       // Redirect to AfterLoginSignup component
-        // Optionally reset form or redirect here
+        // Signup succeeded — set userId & isLoggedIn to show dashboard
+        setIsLoggedIn(true);
+        setUserId(data.userId);  // Make sure your backend returns this on signup
       } else {
         alert(data.message || 'Signup failed');
       }
@@ -39,6 +40,10 @@ const SignupForm = () => {
       alert('An error occurred during signup');
     }
   };
+
+  if (isLoggedIn && userId) {
+    return <UserDashboard userId={userId} />;
+  }
 
   return (
     <form className="auth-form" onSubmit={handleSignup}>
