@@ -25,6 +25,12 @@ const UserDashboard = ({ userId }) => {
     }
   };
 
+  const handleLogout = () => {
+    // Here you would typically clear authentication tokens or user data
+    // For now, we'll just reload the page as in your original Navbar
+    window.location.reload();
+  };
+
   return (
     <>
       <Header />
@@ -35,6 +41,7 @@ const UserDashboard = ({ userId }) => {
           <button onClick={() => setCurrentPage('all')}>See All Thoughts</button>
           <button onClick={() => setCurrentPage('sentiment')}>Sentiment Analysis</button>
           <button onClick={() => setCurrentPage('complaint')}>Complaint Form</button>
+          <button onClick={handleLogout} className="logout-btn">Logout</button>
         </div>
       </div>
 

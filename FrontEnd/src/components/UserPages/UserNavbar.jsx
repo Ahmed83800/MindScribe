@@ -8,6 +8,7 @@ const UserNavbar = ({ setActivePage }) => {
       <button onClick={() => setActivePage('allThoughts')}>See All Thoughts</button>
       <button onClick={() => setActivePage('sentiment')}>Sentiment</button>
       <button onClick={() => setActivePage('complaint')}>Complaint</button>
+      <button onClick={() => window.location.reload()}>Logout</button>
     </nav>
   );
 };
