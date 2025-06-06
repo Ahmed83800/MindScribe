@@ -12,8 +12,10 @@ app.use(cors());
 const authRoutes = require('./routes/auth');
 const thoughtRoutes = require('./routes/thought');
 
+
 app.use('/api/auth', authRoutes);
 app.use('/api/thoughts', thoughtRoutes);
+
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {

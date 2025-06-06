@@ -1,60 +1,66 @@
+// src/UserPages/Sentiment.jsx
 import React, { useState } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
-import SentimentLib from 'sentiment'; // new import
 import './UserPages.css';
 
 const Sentiment = ({ userId }) => {
-  const [data, setData] = useState(null);
+  const [data, setData]       = useState(null);
   const [breakdown, setBreakdown] = useState([]);
-  const [insight, setInsight] = useState(null); // new state
+  const [insight, setInsight] = useState('');      // Gemini insight
 
   const COLORS = {
     positive: '#4CAF50',
     negative: '#F44336',
-    neutral: '#FFC107',
+    neutral : '#FFC107',
   };
 
   const EMOJIS = {
     positive: '😊',
     negative: '😔',
-    neutral: '😐',
+    neutral : '😐',
   };
 
+  /* -------------------------------------------------------------- */
+  /* Fetch Gemini insight                                           */
+  /* -------------------------------------------------------------- */
+  const fetchInsight = async () => {
+    try {
+      const res  = await fetch(`http://localhost:5000/api/thoughts/insight/${userId}`);
+      const json = await res.json();
+      if (res.ok) setInsight(json.insight);
+    } catch (err) {
+      console.error('Gemini insight fetch failed:', err);
+      setInsight('Could not generate insight this time.');
+    }
+  };
+
+  /* -------------------------------------------------------------- */
+  /* Fetch sentiment stats                                          */
+  /* -------------------------------------------------------------- */
   const fetchSentiment = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/thoughts/sentiment/${userId}`);
+      const res    = await fetch(`http://localhost:5000/api/thoughts/sentiment/${userId}`);
       const result = await res.json();
       if (!res.ok) throw new Error(result.error || 'Error fetching data');
 
       setData([
         { name: 'Positive', value: result.summary.positive, category: 'positive' },
         { name: 'Negative', value: result.summary.negative, category: 'negative' },
-        { name: 'Neutral', value: result.summary.neutral, category: 'neutral' },
+        { name: 'Neutral',  value: result.summary.neutral,  category: 'neutral' },
       ]);
       setBreakdown(result.breakdown);
 
-      // -------- NEW: Generate Insight from text using 'sentiment' --------
-      const sentiment = new SentimentLib();
-      const allText = result.breakdown.map(b => b.text).join('. ');
-      const analysis = sentiment.analyze(allText);
-      const score = analysis.score;
-
-      let insightMsg = '';
-      if (score > 5) {
-        insightMsg = "You've generally been feeling positive. Keep it up and reflect on these good days.";
-      } else if (score < -5) {
-        insightMsg = "Your recent entries suggest you've been struggling emotionally. It's okay to ask for support.";
-      } else {
-        insightMsg = "Your mood has been quite balanced. Maybe try exploring your feelings more deeply.";
-      }
-
-      setInsight(insightMsg);
+      // After stats, fetch Gemini insight
+      fetchInsight();
     } catch (err) {
       alert('Failed to fetch sentiment');
       console.error(err);
     }
   };
 
+  /* -------------------------------------------------------------- */
+  /* Render                                                         */
+  /* -------------------------------------------------------------- */
   return (
     <div className="sentiment-container">
       <h2>Sentiment Analysis</h2>
@@ -62,6 +68,7 @@ const Sentiment = ({ userId }) => {
 
       {data && (
         <>
+          {/* Pie Chart */}
           <PieChart width={400} height={300}>
             <Pie
               data={data}
@@ -79,22 +86,25 @@ const Sentiment = ({ userId }) => {
             <Legend />
           </PieChart>
 
+          {/* Emoji counts */}
           <h3>Mood Summary</h3>
           <ul className="emoji-summary">
-            {data.map((item) => (
+            {data.map(item => (
               <li key={item.name}>
                 {EMOJIS[item.category]} {item.name}: {item.value}
               </li>
             ))}
           </ul>
 
+          {/* Gemini Insight */}
           {insight && (
             <div className="insight-box">
-              <h3>AI Insight</h3>
+              <h3>Genuine Insight</h3>
               <p>{insight}</p>
             </div>
           )}
 
+          {/* Breakdown list */}
           <h3>Detailed Breakdown</h3>
           <ul className="breakdown-list">
             {breakdown.map((b, i) => (

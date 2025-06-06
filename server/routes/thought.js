@@ -1,9 +1,12 @@
 // routes/thought.js
-const express = require('express');
-const router = express.Router();
-const Thought = require('../models/Thought');
+const express   = require('express');
+const router    = express.Router();
+const Thought   = require('../models/Thought');
 const Sentiment = require('sentiment');
 const sentiment = new Sentiment();
+
+// 👉  NEW: import Gemini helper
+const { generateInsight } = require('../utils/geminiHelper');
 
 /* ------------------------------------------------------------------ */
 /* Add Thought                                                        */
@@ -23,7 +26,7 @@ router.post('/', async (req, res) => {
 });
 
 /* ------------------------------------------------------------------ */
-/* Update Thought by ID                                               */
+/* Update & Delete                                                    */
 /* ------------------------------------------------------------------ */
 router.put('/:id', async (req, res) => {
   const { mood, text } = req.body;
@@ -35,9 +38,6 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-/* ------------------------------------------------------------------ */
-/* Delete Thought by ID                                               */
-/* ------------------------------------------------------------------ */
 router.delete('/:id', async (req, res) => {
   try {
     await Thought.findByIdAndDelete(req.params.id);
@@ -48,7 +48,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 /* ------------------------------------------------------------------ */
-/* Sentiment Analysis for a User                                      */
+/* Sentiment Stats (existing)                                         */
 /* ------------------------------------------------------------------ */
 router.get('/sentiment/:userId', async (req, res) => {
   try {
@@ -62,36 +62,45 @@ router.get('/sentiment/:userId', async (req, res) => {
     const breakdown = [];
 
     thoughts.forEach(t => {
-      const result = sentiment.analyze(t.text);
-      const category = result.score > 0 ? 'positive'
-                      : result.score < 0 ? 'negative'
-                      : 'neutral';
+      const r   = sentiment.analyze(t.text);
+      const cat = r.score > 0 ? 'positive' : r.score < 0 ? 'negative' : 'neutral';
 
-      if (category === 'positive') positive++;
-      else if (category === 'negative') negative++;
+      if (cat === 'positive') positive++;
+      else if (cat === 'negative') negative++;
       else neutral++;
 
-      breakdown.push({
-        text: t.text,
-        score: result.score,
-        comparative: result.comparative,
-        category,
-        date: t.date
-      });
+      breakdown.push({ text: t.text, score: r.score, category: cat, date: t.date });
     });
 
     res.json({
-      summary: {
-        total: thoughts.length,
-        positive,
-        negative,
-        neutral
-      },
+      summary: { total: thoughts.length, positive, negative, neutral },
       breakdown
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Sentiment analysis failed.' });
+  }
+});
+
+/* ------------------------------------------------------------------ */
+/* Gemini Insight  (NEW ENDPOINT)                                     */
+/* ------------------------------------------------------------------ */
+router.get('/insight/:userId', async (req, res) => {
+  try {
+    const thoughts = await Thought.find({ userId: req.params.userId })
+                                  .sort({ date: -1 })
+                                  .limit(10);          // last 10 thoughts
+
+    if (!thoughts.length) {
+      return res.status(404).json({ error: 'No thoughts found' });
+    }
+
+    const texts   = thoughts.map(t => t.text);
+    const insight = await generateInsight(texts);
+    res.json({ insight });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Gemini insight failed' });
   }
 });
 
