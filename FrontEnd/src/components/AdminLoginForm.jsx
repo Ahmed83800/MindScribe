@@ -1,11 +1,12 @@
 // src/components/AdminLogin.jsx
 import React, { useState } from 'react';
 import AdminDashboard from './AdminPages/AdminDashboard';
-import './AuthForm.css';              // keep existing AuthForm styles
+import './AuthForm.css';
 
 const AdminLogin = () => {
   const [creds, setCreds] = useState({ username: '', password: '' });
   const [logged, setLogged] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = e =>
     setCreds(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -18,10 +19,15 @@ const AdminLogin = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(creds)
       });
-      if (res.ok) setLogged(true);
-      else alert('Invalid admin credentials');
+
+      if (res.ok) {
+        setLogged(true);
+        setErrorMessage('');
+      } else {
+        setErrorMessage('Invalid admin credentials');
+      }
     } catch {
-      alert('Server error');
+      setErrorMessage('Server error. Please try again later.');
     }
   };
 
@@ -30,6 +36,7 @@ const AdminLogin = () => {
   return (
     <form className="auth-form" onSubmit={handleSubmit}>
       <h2>Admin Login</h2>
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
       <input
         name="username"
         placeholder="Username"

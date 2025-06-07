@@ -73,3 +73,12 @@
 .auth-form button:hover {
   background-color: #1d4ed8;
 }
+.error-message {
+  color: #d9534f;
+  background-color: #f9d6d5;
+  border: 1px solid #d9534f;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-weight: 500;
+}

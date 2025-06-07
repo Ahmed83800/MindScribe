@@ -15,13 +15,14 @@ const authRoutes      = require('./routes/auth');
 const thoughtRoutes   = require('./routes/thought');
 const complaintRoutes = require('./routes/complaint');
 const adminRoutes     = require('./routes/admin');
+const blogRoutes = require('./routes/blog');/////del
 
 // Use Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/thoughts', thoughtRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/admin', adminRoutes);
-
+app.use('/api/blogs', blogRoutes);////////del
 // Connect to DB
 mongoose.connect(process.env.MONGO_URI)
   .then(async () => {

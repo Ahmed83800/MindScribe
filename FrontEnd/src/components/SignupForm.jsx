@@ -12,6 +12,7 @@ const SignupForm = () => {
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(''); // ← added
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -29,15 +30,15 @@ const SignupForm = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Signup succeeded — set userId & isLoggedIn to show dashboard
         setIsLoggedIn(true);
-        setUserId(data.userId);  // Make sure your backend returns this on signup
+        setUserId(data.userId);  // Make sure your backend returns this
+        setErrorMessage('');
       } else {
-        alert(data.message || 'Signup failed');
+        setErrorMessage(data.message || 'Signup failed'); // ← replaced alert
       }
     } catch (error) {
       console.error('Signup error:', error);
-      alert('An error occurred during signup');
+      setErrorMessage('An error occurred during signup'); // ← replaced alert
     }
   };
 
@@ -48,6 +49,9 @@ const SignupForm = () => {
   return (
     <form className="auth-form" onSubmit={handleSignup}>
       <h2>Sign Up to MindScribe</h2>
+
+      {errorMessage && <p className="error-message">{errorMessage}</p>} {/* ← added */}
+
       <input
         type="text"
         name="fullName"

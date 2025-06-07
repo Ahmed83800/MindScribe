@@ -10,8 +10,8 @@ const AddThought = ({
 }) => {
   const [thought, setThought] = useState('');
   const [mood, setMood] = useState('');
+  const [error, setError] = useState('');  // ✅ Added error state
 
-  // Pre-fill form if editing
   useEffect(() => {
     if (editingThoughtId && existingThought) {
       setThought(existingThought.text);
@@ -22,11 +22,11 @@ const AddThought = ({
   const handleThoughtSubmit = async (e) => {
     e.preventDefault();
     if (!userId) {
-      return alert('User ID not found');
+      setError('User ID not found');
+      return;
     }
 
-    // Use full backend URL instead of a relative path
-    const baseUrl = 'http://localhost:5000'; 
+    const baseUrl = 'http://localhost:5000';
     const url = editingThoughtId
       ? `${baseUrl}/api/thoughts/${editingThoughtId}`
       : `${baseUrl}/api/thoughts`;
@@ -45,19 +45,21 @@ const AddThought = ({
         throw new Error(data.error || 'Something went wrong');
       }
 
-      alert(data.message || 'Thought saved!');
       setThought('');
       setMood('');
+      setError('');
+      //alert(data.message || 'Thought saved!');
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error('Failed to submit thought:', err);
-      alert('Failed to submit thought');
+      setError('Failed to submit thought');
     }
   };
 
   return (
     <form className="thought-form" onSubmit={handleThoughtSubmit}>
       <h2>{editingThoughtId ? 'Edit Thought' : 'Add New Thought'}</h2>
+      {error && <p className="error-message">{error}</p>}  {/* ✅ Display error */}
       <textarea
         placeholder="What's on your mind?"
         value={thought}

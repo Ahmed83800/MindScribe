@@ -1,12 +1,14 @@
 // src/UserPages/AllThoughts.jsx
 import React, { useEffect, useState } from 'react';
-import AddThought from './AddThought';           // ← import the form you already have
+import AddThought from './AddThought';           
 import './UserPages.css';
 
 const AllThoughts = ({ userId }) => {
-  const [thoughts, setThoughts]   = useState([]);
-  const [loading, setLoading]     = useState(true);
-  const [editing, setEditing]     = useState(null); // { _id, text, mood } or null
+  const [thoughts, setThoughts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(null); // { _id, text, mood } or null
+  const [deleteCandidate, setDeleteCandidate] = useState(null); // For custom delete popup
+  const [error, setError] = useState('');
 
   /* ------------------------------------------------------------------ */
   /* Fetch thoughts                                                     */
@@ -27,20 +29,29 @@ const AllThoughts = ({ userId }) => {
   useEffect(() => { fetchThoughts(); }, [userId]);
 
   /* ------------------------------------------------------------------ */
-  /* Delete                                                             */
+  /* Delete handlers                                                   */
   /* ------------------------------------------------------------------ */
-  const handleDelete = async (id) => {
-    if (!window.confirm('Delete this thought?')) return;
+  const handleDeleteClick = (thought) => {
+    setDeleteCandidate(thought);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteCandidate) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/thoughts/${id}`, {
+      const res = await fetch(`http://localhost:5000/api/thoughts/${deleteCandidate._id}`, {
         method: 'DELETE'
       });
       if (!res.ok) throw new Error();
-      setThoughts(prev => prev.filter(t => t._id !== id));
+      setThoughts(prev => prev.filter(t => t._id !== deleteCandidate._id));
+      setDeleteCandidate(null);
+      setError('');
     } catch {
-      alert('Failed to delete');
+      setError('Failed to delete thought.');
+      setDeleteCandidate(null);
     }
   };
+
+  const cancelDelete = () => setDeleteCandidate(null);
 
   /* ------------------------------------------------------------------ */
   /* Start editing                                                      */
@@ -51,8 +62,8 @@ const AllThoughts = ({ userId }) => {
   /* After edit succeeds                                                */
   /* ------------------------------------------------------------------ */
   const handleEditSuccess = () => {
-    setEditing(null);   // hide form
-    fetchThoughts();    // refresh list
+    setEditing(null);
+    fetchThoughts();
   };
 
   /* ------------------------------------------------------------------ */
@@ -83,7 +94,19 @@ const AllThoughts = ({ userId }) => {
         </div>
       )}
 
-      {/* Grid of cards */}
+      {/* Custom Delete Confirmation Popup */}
+      {deleteCandidate && (
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <p>Delete this thought?</p>
+            <p><em>"{deleteCandidate.text}"</em></p>
+            <button onClick={confirmDelete}>Yes, Delete</button>
+            <button onClick={cancelDelete}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Grid of thought cards */}
       <div className="all-thoughts-grid">
         {thoughts.map((t) => (
           <fieldset key={t._id} className="thought-card">
@@ -104,7 +127,7 @@ const AllThoughts = ({ userId }) => {
               </button>
               <button
                 className="thought-btn delete-btn"
-                onClick={() => handleDelete(t._id)}
+                onClick={() => handleDeleteClick(t)}
               >
                 Delete
               </button>
@@ -112,6 +135,8 @@ const AllThoughts = ({ userId }) => {
           </fieldset>
         ))}
       </div>
+
+      {error && <p className="error-text">{error}</p>}
     </div>
   );
 };

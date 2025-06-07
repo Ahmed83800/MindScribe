@@ -6,6 +6,7 @@ const LoginForm = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');   // ← added
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -25,12 +26,13 @@ const LoginForm = () => {
 
       if (response.ok) {
         setIsLoggedIn(true);
-        setUserId(data.userId);      // <- Now reads data.userId
+        setUserId(data.userId);          // unchanged
+        setErrorMessage('');             // clear any old error
       } else {
-        alert(data.message || 'Login failed');
+        setErrorMessage(data.message || 'Login failed');   // ← replaced alert
       }
     } catch {
-      alert('An error occurred during login');
+      setErrorMessage('An error occurred during login');   // ← replaced alert
     }
   };
 
@@ -41,6 +43,9 @@ const LoginForm = () => {
   return (
     <form className="auth-form" onSubmit={handleLogin}>
       <h2>Welcome Back To MindScribe</h2>
+
+      {errorMessage && <p className="error-message">{errorMessage}</p>}  {/* added */}
+
       <input
         type="text"
         name="username"

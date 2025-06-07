@@ -4,6 +4,7 @@ import AddThought from './AddThought';
 import AllThoughts from './AllThoughts';
 import Sentiment from './Sentiment';
 import ComplaintForm from './ComplaintForm';
+import UserBlog from './UserBlog';
 import './UserPages.css';
 
 const UserDashboard = ({ userId }) => {
@@ -20,6 +21,8 @@ const UserDashboard = ({ userId }) => {
         return <Sentiment userId={userId} />;
       case 'complaint':
         return <ComplaintForm userId={userId} />;
+      case 'blog':
+        return <UserBlog userId={userId} />;
       default:
         return <AddThought userId={userId} />;
     }
@@ -41,6 +44,8 @@ const UserDashboard = ({ userId }) => {
           <button onClick={() => setCurrentPage('all')}>See All Thoughts</button>
           <button onClick={() => setCurrentPage('sentiment')}>Sentiment Analysis</button>
           <button onClick={() => setCurrentPage('complaint')}>Complaint Form</button>
+          <button onClick={() => setCurrentPage('blog')}>Blogs</button>
+
           <button onClick={handleLogout} className="logout-btn">Logout</button>
         </div>
       </div>
