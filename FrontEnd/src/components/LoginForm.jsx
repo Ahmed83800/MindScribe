@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import './AuthForm.css';
 import UserDashboard from './UserPages/UserDashboard';
+import { useNavigate } from 'react-router-dom'; // ⬅ import
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState(null);
-  const [errorMessage, setErrorMessage] = useState('');   // ← added
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate(); // ⬅ hook
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -14,7 +16,6 @@ const LoginForm = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
@@ -26,13 +27,13 @@ const LoginForm = () => {
 
       if (response.ok) {
         setIsLoggedIn(true);
-        setUserId(data.userId);          // unchanged
-        setErrorMessage('');             // clear any old error
+        setUserId(data.userId);
+        setErrorMessage('');
       } else {
-        setErrorMessage(data.message || 'Login failed');   // ← replaced alert
+        setErrorMessage(data.message || 'Login failed');
       }
     } catch {
-      setErrorMessage('An error occurred during login');   // ← replaced alert
+      setErrorMessage('An error occurred during login');
     }
   };
 
@@ -41,27 +42,47 @@ const LoginForm = () => {
   }
 
   return (
-    <form className="auth-form" onSubmit={handleLogin}>
-      <h2>Welcome Back To MindScribe</h2>
+    <div style={{ position: 'relative', minHeight: '100vh' }}>
+      {/* Back arrow */}
+      <button
+        onClick={() => navigate('/')}
+        style={{
+          background: 'none',
+          border: 'none',
+          color: 'gold',
+          fontSize: '1.8rem',
+          cursor: 'pointer',
+          position: 'fixed',
+          top: '10px',
+          left: '10px',
+          zIndex: 1000
+        }}
+      >
+        ←
+      </button>
 
-      {errorMessage && <p className="error-message">{errorMessage}</p>}  {/* added */}
+      <form className="auth-form" onSubmit={handleLogin}>
+        <h2>Log In To MindScribe</h2>
 
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        onChange={handleChange}
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        onChange={handleChange}
-        required
-      />
-      <button type="submit">Login</button>
-    </form>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          onChange={handleChange}
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
+    </div>
   );
 };
 

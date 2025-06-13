@@ -4,6 +4,7 @@ const router = express.Router();
 const Complaint = require('../models/Complaint');
 const User = require('../models/User'); // Make sure this is imported
 
+// Submit a complaint
 router.post('/', async (req, res) => {
   const { userId, complaint } = req.body;
 
@@ -12,16 +13,15 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    // Find user to get their username
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
     const newComplaint = new Complaint({
-      username: user.username, // Store username in complaint
+      username: user.username,
       complaint,
-      userId: user._id // Optionally store userId too
+      userId: user._id
     });
 
     await newComplaint.save();
@@ -29,6 +29,24 @@ router.post('/', async (req, res) => {
   } catch (err) {
     console.error('Complaint submission error:', err);
     res.status(500).json({ error: 'Server error submitting complaint' });
+  }
+});
+
+// Delete a complaint by ID
+router.delete('/:id', async (req, res) => {
+  const complaintId = req.params.id;
+
+  try {
+    const deletedComplaint = await Complaint.findByIdAndDelete(complaintId);
+
+    if (!deletedComplaint) {
+      return res.status(404).json({ error: 'Complaint not found' });
+    }
+
+    res.json({ message: 'Complaint deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting complaint:', err);
+    res.status(500).json({ error: 'Server error deleting complaint' });
   }
 });
 

@@ -1,27 +1,29 @@
-// src/components/AdminPages/AdminDashboard.jsx
 import React, { useState } from 'react';
-import AdminHeader      from './AdminHeader';
-import UsersList        from './UsersList';
-import ComplaintsList   from './ComplaintsList';
-import AdminBlog        from './AdminBlog';
+import AdminHeader from './AdminHeader';
+import UsersList from './UsersList';
+import ComplaintsList from './ComplaintsList';
+import AdminBlog from './AdminBlog';
 import './AdminPages.css';
 
 const AdminDashboard = () => {
-  const [page, setPage]       = useState('users');
+  const [page, setPage] = useState('users');
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const renderPage = () => {
-    if (page === 'users')       return <UsersList />;
-    if (page === 'complaints')  return <ComplaintsList />;
-    if (page === 'adminBlog')   return <AdminBlog />;
+    if (page === 'users') return <UsersList />;
+    if (page === 'complaints') return <ComplaintsList />;
+    if (page === 'adminBlog') return <AdminBlog />;
     return null;
   };
 
   return (
     <>
-      <AdminHeader />
 
-      {/* sliding navbar */}
+
+      <AdminHeader onToggleSidebar={() => setSidebarOpen(prev => !prev)} />
+
+
+      {/* Sidebar */}
       <div className={`admin-navbar-container ${sidebarOpen ? '' : 'closed'}`}>
         <nav className="admin-navbar">
           <button onClick={() => setPage('users')}>Users</button>
@@ -31,18 +33,10 @@ const AdminDashboard = () => {
         </nav>
       </div>
 
-      {/* sidebar toggle */}
-      <button
-        className="admin-toggle-sidebar"
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-      >
-        {sidebarOpen ? '←' : '→'}
-      </button>
-
+      {/* Page Content */}
       <div className="admin-page-content">{renderPage()}</div>
     </>
   );
 };
 
 export default AdminDashboard;
-////////control c onec

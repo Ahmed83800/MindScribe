@@ -9,7 +9,7 @@ import './UserPages.css';
 
 const UserDashboard = ({ userId }) => {
   const [currentPage, setCurrentPage] = useState('add');
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const renderPage = () => {
     switch (currentPage) {
@@ -29,32 +29,31 @@ const UserDashboard = ({ userId }) => {
   };
 
   const handleLogout = () => {
-    // Here you would typically clear authentication tokens or user data
-    // For now, we'll just reload the page as in your original Navbar
     window.location.reload();
   };
 
   return (
     <>
-      <Header />
+      <Header toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
-      <div className={`user-navbar-container ${sidebarOpen ? '' : 'closed'}`}>
-        <div className="user-navbar">
-          <button onClick={() => setCurrentPage('add')}>Add New Thought</button>
-          <button onClick={() => setCurrentPage('all')}>See All Thoughts</button>
-          <button onClick={() => setCurrentPage('sentiment')}>Sentiment Analysis</button>
-          <button onClick={() => setCurrentPage('complaint')}>Complaint Form</button>
-          <button onClick={() => setCurrentPage('blog')}>Blogs</button>
+      <div className="dashboard-container">
+        {/* Sidebar */}
+        <div className={`user-navbar-container ${sidebarOpen ? 'open' : ''}`}>
+          <div className="user-navbar">
+            <button onClick={() => setCurrentPage('add')}>Add New Thought</button>
+            <button onClick={() => setCurrentPage('all')}>See All Thoughts</button>
+            <button onClick={() => setCurrentPage('sentiment')}>Sentiment Analysis</button>
+            <button onClick={() => setCurrentPage('complaint')}>Complaint Form</button>
+            <button onClick={() => setCurrentPage('blog')}>Blogs</button>
+            <button onClick={handleLogout} className="logout-btn">Logout</button>
+          </div>
+        </div>
 
-          <button onClick={handleLogout} className="logout-btn">Logout</button>
+        {/* Page Content */}
+        <div className={`user-page-content ${sidebarOpen ? 'sidebar-shifted' : ''}`}>
+          {renderPage()}
         </div>
       </div>
-
-      <button className="toggle-sidebar" onClick={() => setSidebarOpen(!sidebarOpen)}>
-        {sidebarOpen ? '←' : '→'}
-      </button>
-
-      <div className="user-page-content">{renderPage()}</div>
     </>
   );
 };

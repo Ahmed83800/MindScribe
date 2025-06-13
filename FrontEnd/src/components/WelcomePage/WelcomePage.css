@@ -1,0 +1,111 @@
+body, html{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    height: 100%;
+}
+.welcome-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;  /* change from flex-start to center */
+  height: 100vh;
+  width: 100vw;
+  padding: 0 5%;
+  color: white;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  border: none;
+  outline: none;
+}
+
+
+/* Add a slight transparent overlay to enhance readability */
+.welcome-page::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+.welcome-content {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  margin-left: 0; /* remove left margin */
+  text-align: center; /* add center text */
+}
+.welcome-title {
+  font-size: 3rem;
+  font-weight: bold;
+  line-height: 1.2;
+  color: #ffffff;
+  text-shadow: 0 0 5px #fff, 0 0 15px #ff00ff, 0 0 25px #00ffff;
+}
+
+.welcome-title span {
+  color: #ffcc00;
+  text-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00;
+}
+
+.welcome-subtitle {
+  font-size: 1.25rem;
+  color: #dddddd;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.welcome-buttons {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+
+  justify-content: center; /* Add this line to center buttons */
+}
+
+.welcome-buttons button {
+  padding: 0.75rem 1.5rem;
+  background: #003366;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+}
+
+.welcome-buttons button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px #ffcc00, 0 0 25px #00ffff;
+}
+.logo-link {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.logo-link:hover {
+  color: #555;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .welcome-page {
+    padding: 2rem;
+    justify-content: center;
+  }
+
+  .welcome-content {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .welcome-buttons {
+    justify-content: center;
+  }
+}
